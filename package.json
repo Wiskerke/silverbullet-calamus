@@ -1,0 +1,10 @@
+{
+  "name": "silverbullet-calamus",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "esbuild": "^0.25",
+    "tsx": "^4",
+    "yaml": "^2"
+  }
+}
