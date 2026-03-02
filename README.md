@@ -10,26 +10,49 @@ parser and renderer for the Supernote file format.
 - Embed notes (or individual pages) in markdown using fenced code blocks
 - Self-contained: WASM module is bundled into the plug (<200KB)
 
+## Limitations
+
+This software has only been tested with a recent version of notes created on the Nomad. So it might not work for other devices or older software versions.
+
+Custom templates (backgrounds) are not supported: To reduce the size of the plug, png support in the WASM component was disabled. Adding basic support would be fairly easy, but being able to properly handle color in the custom template conflicts with the theming support. Not considered a priority. 
+
 ## Installation
 
-### From library (recommended)
+### Configure via CONFIG
 
-Add to your SilverBullet space's `SETTINGS` page:
+Add this block to the CONFIG settings, and perform the action "Plugs: Update". Silverbullet will download the plug from the github assets.
 
-```yaml
-libraries:
-- import: "https://raw.githubusercontent.com/Wiskerke/silverbullet-calamus/main/"
+````markdown
+```space-lua
+config.set {
+  plugs = {
+    "ghr:Wiskerke/silverbullet-calamus/v0.1.0"
+  }
+}
+
+config.set("calamus", {
+  theme = { bg = "#f0f0f0", fg = "#1a1a1a"},
+  theme_darkmode = { bg = "#1a1a1a", fg = "#e0e0e0"}
+})
 ```
+````
 
 ### Manual
 
-Copy `silverbullet-calamus.plug.js` to your space's `_plug/` folder and reload.
+Download `silverbullet-calamus.plug.js` from the github release folder, or build it yourself.
+Then copy `silverbullet-calamus.plug.js` to your space's `_plug/` folder and reload.
+
+Note that the action "Plugs: Update" will delete the file.
+
+### Library manager?
+
+I tried to use the new Plug.md and library manager, but I could not get that working with github release assets. So for now I do not recommend this.
 
 ## Usage
 
 ### Viewing .note files
 
-Upload a `.note` file to your SilverBullet space. Navigate to it with the Document Picker. 
+Upload a `.note` file to your SilverBullet space. Navigate to it with the action `Navigate: Document Picker`. For some example note files, see [testfiles](https://github.com/Wiskerke/calamus/tree/main/testfiles) in the calamus repository.
 
 ### Inline embedding
 
@@ -49,23 +72,13 @@ Options:
 | `file`  | `notes/hw.note` | Path to the file (required)     |
 | `page`  | `3`             | Single page (1-indexed)         |
 | `pages` | `1-3` or `1,3,5`| Page range or list              |
-| 'theme'          | `fg=#000000, bg=#00AA00` | Colors to use |
-| 'theme-darkmode' | 'fg=#00FF00, bg=#000000' | Colors to use |
+| `theme`          | `fg=#000000, bg=#00AA00` | Colors to use |
+| `theme-darkmode` | `fg=#00FF00, bg=#000000` | Colors to use |
 
-
+Only `file` is required.
 Omit `page`/`pages` to show all pages.
+Omit `theme` and `theme-darkmode` to use the defaults.
 
-### Settings
-
-Configure the default theme by adding a bit of space-lua in the CONFIG file.
-
-    ```space-lua
-    config.set("calamus", {
-        theme = { bg = "#f0f0f0", fg = "#1a1a1a"},
-        theme_darkmode = { bg = "#1a1a1a", fg = "#e0e0e0"}
-    })
-    ```
-  
 ## Building from source
 
 Easiest is to use [Nix](https://nixos.org/) with flakes enabled:
