@@ -104,10 +104,7 @@ ${getThemeBootstrapScript(theme)}
 
   try {
     // Read the .note file via SilverBullet syscall
-    const fileData = await syscall("space.readAttachment", ${JSON.stringify(file)});
-    const noteBytes = typeof fileData === "string"
-      ? base64ToBytes(fileData)
-      : new Uint8Array(fileData);
+    const noteBytes = await syscall("space.readDocument", ${JSON.stringify(file)});
 
     // Initialize WASM and parse
     initCalamus();
@@ -139,7 +136,17 @@ ${getThemeBootstrapScript(theme)}
     }
     const shortName = ${JSON.stringify(file)}.split("/").pop();
     const label = dp.length === 1 ? "page" : "pages";
-    statusEl.textContent = shortName + " — " + label + ": " + parts.join(", ");
+    const link = document.createElement("a");
+    link.textContent = shortName;
+    link.href = "#";
+    link.style.cssText = "color: inherit; text-decoration: underline; cursor: pointer;";
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      syscall("editor.navigate", ${JSON.stringify(file)});
+    });
+    statusEl.innerHTML = "";
+    statusEl.appendChild(link);
+    statusEl.appendChild(document.createTextNode(" \u2014 " + label + ": " + parts.join(", ")));
 
     // Get color LUT for current theme
     const colorLUT = getActiveColorLUT();
