@@ -64,7 +64,9 @@ function parsePageRange(spec: string): number[] {
   for (const part of spec.split(",")) {
     const trimmed = part.trim();
     if (trimmed.includes("-")) {
-      const [start, end] = trimmed.split("-").map((s) => parseInt(s.trim(), 10));
+      const [start, end] = trimmed
+        .split("-")
+        .map((s) => parseInt(s.trim(), 10));
       if (!isNaN(start) && !isNaN(end)) {
         for (let i = start; i <= end; i++) pages.push(i);
       }
